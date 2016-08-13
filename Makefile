@@ -1,4 +1,4 @@
 
 
 all:
-	gcc main.c deck.c -o build/sabacctest
+	gcc main.c deck.c sabacc.c -lcurses -o build/sabacctest

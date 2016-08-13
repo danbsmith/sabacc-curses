@@ -19,4 +19,6 @@ typedef struct Card {
 } card;
 
 card* gendeck(card* deck);
+
+void dealhand(card* deck, card* hand);
 #endif
