@@ -26,19 +26,11 @@ int main(int argc, char** argv) {
 	WINDOW* msgwindow = newwin(6, 80, 20, 0);
 	display_hand(playerhand, playerpoints, computerpoints, "TEMPORARY MESSAGE", cardspots, score, msgwindow);
 	wgetch(score);
+	erase_windows(cardspots, score, msgwindow);
 	for(int i = 0; i < 5; i++) {
-		werase(cardspots[i]);
-		wborder(cardspots[i], ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
-		wrefresh(cardspots[i]);
 		delwin(cardspots[i]);
 	}
-	werase(score);
-	wborder(score, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
-	wrefresh(score);
 	delwin(score);
-	werase(msgwindow);
-	wborder(msgwindow, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
-	wrefresh(msgwindow);
 	delwin(msgwindow);
 	endwin();
 	return 0;

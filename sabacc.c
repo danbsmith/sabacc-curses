@@ -33,3 +33,43 @@ void display_hand(card* hand, int playerpoints, int computerpoints, char* msg, W
   wrefresh(msgwindow);
   return;
 }
+
+void erase_windows(WINDOW** cardspots, WINDOW* score, WINDOW* msgwindow) {
+  for(int i = 0; i < 5; i++) {
+    werase(cardspots[i]);
+    wborder(cardspots[i], ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
+    wrefresh(cardspots[i]);
+  }
+  werase(score);
+  wborder(score, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
+  wrefresh(score);
+  werase(msgwindow);
+  wborder(msgwindow, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
+  wrefresh(msgwindow);
+}
+
+void take_card(card* deck, card* hand) {
+  int i = 0;
+  while((hand + i)->value > 20) {
+    i++;
+  }
+  int j = 0;
+  while((deck + j)->value > 20) {
+    j++;
+  }
+  *(hand + i) = *(deck + j);
+  (hand + i)->switchable = true;
+  (deck + j)->value = 21;
+  return;
+}
+
+void discard(card* hand, int cardnum) { // Cardnum starts from 0 (player input must be decremented before being passed to this)
+  (hand + cardnum)->value = 21;
+  (hand + cardnum)->switchable = false;
+  return;
+}
+
+void freeze_card(card* hand, int cardnum) { // Cardnum starts from 0 (player input must be decremented before being passed to this)
+  (hand + cardnum)->switchable = false;
+  return;
+}
