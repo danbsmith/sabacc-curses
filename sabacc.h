@@ -7,7 +7,7 @@
 
 void display_hand(card* hand, int playerpoints, int computerpoints, char* msg, WINDOW** cardspots, WINDOW* score, WINDOW* msgwindow);
 
-void erase_windows(WINDOW** cardspots, WINDOW* score WINDOW* msgwindow);
+void erase_windows(WINDOW** cardspots, WINDOW* score, WINDOW* msgwindow);
 
 void take_card(card* deck, card* hand);
 

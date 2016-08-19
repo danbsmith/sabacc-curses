@@ -11,7 +11,7 @@ int main(int argc, char** argv) {
 	card deck[76];
 	gendeck(deck);
 	card playerhand[5];
-	dealhand(deck, playerhand);
+	deal_hand(deck, playerhand);
 	initscr();
 	cbreak();
 	noecho();
@@ -39,8 +39,8 @@ int main(int argc, char** argv) {
 		deck = gendeck(deck);
 		card playerhand[5];
 		card computerhand[5];
-		dealhand(deck, playerhand);
-		dealhand(deck, computerhand);
+		deal_hand(deck, playerhand);
+		deal_hand(deck, computerhand);
 		bool handdone = false;
 		while(!handdone) {
 			bool playercalled = false;
