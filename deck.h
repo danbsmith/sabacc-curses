@@ -16,9 +16,10 @@ typedef struct Card {
   int value;
   cardsuit suit;
   char name[64];
+  bool switchable;
 } card;
 
 card* gendeck(card* deck);
 
-void dealhand(card* deck, card* hand);
+void deal_hand(card* deck, card* hand);
 #endif

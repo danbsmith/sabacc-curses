@@ -192,16 +192,19 @@ card* gendeck(card* deck) {
   return deck;
 }
 
-void dealhand(card* deck, card* hand) {
+void deal_hand(card* deck, card* hand) {
   int i = 0;
   while((deck + i)->value > 20) {
     i++;
   }
   *(hand + 0) = *(deck + i + 0);
   (deck + i + 0)->value = 21;
+  (hand + 0)->switchable = true;
   *(hand + 1) = *(deck + i + 1);
+  (hand + 1)->switchable = true;
   (deck + i + 1)->value = 21;
   *(hand + 2) = *(deck + i + 2);
+  (hand + 2)->switchable = true;
   (deck + i + 2)->value = 21;
   (hand + 3)->value = 21;
   (hand + 4)->value = 21;
