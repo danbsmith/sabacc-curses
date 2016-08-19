@@ -23,6 +23,9 @@ void display_hand(card* hand, int playerpoints, int computerpoints, char* msg, W
     for(int j = 1; j < neededlines; j++) {
       mvwprintw(*(cardspots + i), 3 + j, 1,  "%.8s", (phand[i].name + (j * 8)));
     }
+    if(!phand[i].switchable) {
+      mvwprintw(*(cardspots + i), 2, 0, "LOCKED");
+    }
     wrefresh(*(cardspots + i));
   }
   box(score, 0, 0);
@@ -50,7 +53,7 @@ void erase_windows(WINDOW** cardspots, WINDOW* score, WINDOW* msgwindow) {
 
 void take_card(card* deck, card* hand) {
   int i = 0;
-  while((hand + i)->value > 20) {
+  while((hand + i)->value < 20) {
     i++;
   }
   int j = 0;

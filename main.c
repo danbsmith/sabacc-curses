@@ -27,6 +27,22 @@ int main(int argc, char** argv) {
 	display_hand(playerhand, playerpoints, computerpoints, "TEMPORARY MESSAGE", cardspots, score, msgwindow);
 	wgetch(score);
 	erase_windows(cardspots, score, msgwindow);
+	take_card(deck, playerhand);
+	display_hand(playerhand, playerpoints, computerpoints, "DREW 1 CARD", cardspots, score, msgwindow);
+	wgetch(score);
+	erase_windows(cardspots, score, msgwindow);
+	discard(playerhand, 3);
+	display_hand(playerhand, playerpoints, computerpoints, "DISCARDED PREVIOUS CARD", cardspots, score, msgwindow);
+	wgetch(score);
+	erase_windows(cardspots, score, msgwindow);
+	discard(playerhand, 2);
+	display_hand(playerhand, playerpoints, computerpoints, "DISCARDED ANOTHER CARD", cardspots, score, msgwindow);
+	wgetch(score);
+	erase_windows(cardspots, score, msgwindow);
+	freeze_card(playerhand, 0);
+	display_hand(playerhand, playerpoints, computerpoints, "FROZE A CARD", cardspots, score, msgwindow);
+	wgetch(score);
+	erase_windows(cardspots, score, msgwindow);
 	for(int i = 0; i < 5; i++) {
 		delwin(cardspots[i]);
 	}
