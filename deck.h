@@ -23,4 +23,7 @@ typedef struct Card {
 card* gendeck(card* deck);
 
 void deal_hand(card* deck, card* hand);
+
+int get_hand_vals(card* hand, int* vals);
+
 #endif

@@ -210,3 +210,13 @@ void deal_hand(card* deck, card* hand) {
   (hand + 4)->value = 21;
   return;
 }
+
+int get_hand_vals(card* hand, int* vals) {
+  for(int i = 0; i < 5; i++) {
+    if(hand[i].value < 21) {
+      vals[cards] = hand[i].value;
+      cards++;
+    }
+  }
+  return cards;
+}
