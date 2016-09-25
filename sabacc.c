@@ -76,3 +76,19 @@ void freeze_card(card* hand, int cardnum) { // Cardnum starts from 0 (player inp
   (hand + cardnum)->switchable = false;
   return;
 }
+
+void switch_card(card* deck, card* hand) {
+  int switchable_cards = 0;
+  for(int i = 0; i < 5; i++) {
+    if(hand[i].value < 21 && hand[i].switchable) {switchable_cards++;}
+  }
+  if(switchable_cards == 0) {return;}
+  int hand_index = random() % 5;
+  while(!((hand[hand_index].value < 21) && (hand[hand_index].switchable))) {hand_index = random() % 5;}
+  int deck_index = random() % 76;
+  while(!(deck[deck_index].value < 21)) {deck_index = random() % 76;}
+  card tmpcard = hand[hand_index];
+  hand[hand_index] = deck[deck_index];
+  deck[deck_index] = tmpcard;
+  return;
+}

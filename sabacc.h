@@ -15,4 +15,6 @@ void discard(card* hand, int cardnum);
 
 void freeze_card(card* hand, int cardnum);
 
+void switch_card(card* deck, card* hand);
+
 #endif
