@@ -17,4 +17,6 @@ void freeze_card(card* hand, int cardnum);
 
 void switch_card(card* deck, card* hand);
 
+int handeval(card* hand1, card* hand2);
+
 #endif

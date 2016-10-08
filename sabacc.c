@@ -92,3 +92,62 @@ void switch_card(card* deck, card* hand) {
   deck[deck_index] = tmpcard;
   return;
 }
+
+/*
+ * Returns the number of the hand which will win, or 0 in case of a tie
+ */
+
+int handeval(card* hand1, card* hand2) {
+  int winner;
+  int hand1_vals[5];
+  int hand2_vals[5];
+  int hand1_tot, hand2_tot;
+  int hand1_size = get_hand_vals(hand1, hand1_vals);
+  int hand2_size = get_hand_vals(hand2, hand2_vals);
+  for(int i = 0; i < hand1_size; i++) {
+    hand1_tot = hand1_tot + hand1_vals[i];
+  }
+  for(int i = 0; i < hand2_size; i++) {
+    hand2_tot = hand2_tot + hand2_vals[i];
+  }
+  int hand1_diff = hand1_tot - 23;
+  int hand2_diff = hand2_tot - 23;
+  if(hand1_diff < hand2_diff) {
+    if(hand2_diff == 0) {winner = 2;}
+    else if(hand2_diff > 0) {winner = 1;}
+    else {
+      if(hand1_diff == -46) {winner = 1;}
+      else                  {winner = 2;}
+    }
+  }
+  else if(hand1_diff > hand2_diff) {
+    if(hand1_diff == 0) {winner = 1;}
+    else if(hand2_diff > 0) {winner = 2;}
+    else {
+      if(hand2_diff == -46) {winner = 2;}
+      else                  {winner = 1;}
+    }
+  }
+  else {winner = 0;}
+  // Detect idiots arrays (special case)
+  uint8_t hand1_idiots = 0;
+  uint8_t hand2_idiots = 0;
+  if(hand1_size == 3) {
+    for(int i = 0; i < 3; i++) {
+      if(hand1_vals[i] == 0) {hand1_idiots = hand1_idiots | 1;}
+      if(hand1_vals[i] == 2) {hand1_idiots = hand1_idiots | 2;}
+      if(hand1_vals[i] == 3) {hand1_idiots = hand1_idiots | 4;}
+    }
+  }
+  if(hand2_size == 3) {
+    for(int i = 0; i < 3; i++) {
+      if(hand2_vals[i] == 0) {hand2_idiots = hand2_idiots | 1;}
+      if(hand2_vals[i] == 2) {hand2_idiots = hand2_idiots | 2;}
+      if(hand2_vals[i] == 3) {hand2_idiots = hand2_idiots | 4;}
+    }
+  }
+  if(hand1_idiots == 7) {winner = 1;}
+  if(hand2_idiots == 7) {winner = 2;}
+  if(hand1_idiots == 7 && hand2_idiots == 7) {winner = 0;}
+  return winner;
+}
