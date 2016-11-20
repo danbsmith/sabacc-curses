@@ -72,33 +72,65 @@ int main(int argc, char** argv) {
 		while(!handdone) {
 			bool playercalled = false;
 			bool computercalled = false;
-			display_hand(playerhand, playerpoints, computerpoints, "Press 'd' to discard, 't' to take a card, k to place a card in the interference field or c to call", cardspots, score, msgwindow);
-			int act = wgetch(score);
-			switch(act) {
-				case 'T':
-				case 't':
-					take_card(deck, playerhand);
-					break;
-				case 'D':
-				case 'd':
-					werase(msgwindow);
-					int vals[5];
-					int cards = 0;
-					for(int i = 0; i < 5; i++) {
-						if(playerhand[i].value < 21) {
-							vals[cards] = playerhand[i].value;
-							cards++;
+			bool validcmd = false;
+			while(!validcmd) {
+				display_hand(playerhand, playerpoints, computerpoints, "Press 'd' to discard, 't' to take a card, k to place a card in the interference field or c to call", cardspots, score, msgwindow);
+				int act = wgetch(score);
+				validcmd = true;
+				switch(act) {
+					case 'T':
+					case 't':
+						take_card(deck, playerhand);
+						break;
+					case 'D':
+					case 'd':
+						werase(msgwindow);
+						int vals[5];
+						int cards = get_hand_vals(playerhand, vals);
+						mvwprintw(msgwindow, "Pick number for card to discard: ");
+						for(int i = 1; i < cards; i++) {
+							wprintw(msgwindow, "%d: %d?  ", i, vals[i]);
 						}
-					}
-					mvwprintf(msgwindow, "Pick number for card to discard: ");
-					for(int i = 1; i < cards; i++) {
-						wprintf(msgwindow, "%d: %d?  ", i, vals[i]);
-					}
-					wrefresh();
-					int cardnum = wgetch(score);
-					cardnum = cardnum - 48;
-					discard(playerhand, cardnum - 1);
+						wrefresh();
+						int cardnum = wgetch(score);
+						cardnum = cardnum - 48;
+						discard(playerhand, cardnum - 1);
+						break;
+					case 'K':
+					case 'k':
+						werase(msgwindow);
+						int vals[5];
+						int cards = get_hand_vals(playerhand, vals);
+						mvwprintw(msgwindow, "Pick number for card to freed: ");
+						for(int i = 1; i < cards; i++) {
+							wprintw(msgwindow, "%d: %d?  ", i , vals[i]);
+						}
+						wrefresh();
+						int cardnum = wgetch(score);
+						cardnum = cardnum - 48;
+						freeze_card(card* playerhand, cardnum);
+						break;
+					case 'C': // Call hand (player)
+					case 'c':
+						playercalled = true;
 					break;
+					default:
+						werase(msgwindow);
+						mvwprintw(msgwindow, "Invalid command.  Press any key to try again.");
+						wrefresh();
+						wgetch(score);
+						validcmd = false;
+				}
+			}
+			if(computercalled) {
+				int vals[5];
+				int player_hand_size;
+				if(random() % 2) {
+					switch_card(playerhand, deck);
+				}
+				if(random() % 2) {
+					switch_card(computerhand, deck);
+				}
 			}
 		}
 	}
