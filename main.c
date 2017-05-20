@@ -6,75 +6,44 @@
 #include "deck.h"
 
 int main(int argc, char** argv) {
-	/*card deck[76];
-	initscr();						// Init and setup for curses
-	cbreak();							// ^
-	noecho();							// ^
-	keypad(stdscr, TRUE);	// ^
-	card playerhand[5];
-	deal_hand(deck, playerhand);
-	WINDOW* cardspots[5];
-	cardspots[0] = newwin(12, 10, 5, 0);
-	cardspots[1] = newwin(12, 10, 5, 10);
-	cardspots[2] = newwin(12, 10, 5, 20);
-	cardspots[3] = newwin(12, 10, 5, 30);
-	cardspots[4] = newwin(12, 10, 5, 40);
-	WINDOW* score = newwin(3, 80, 0, 0);
-	WINDOW* msgwindow = newwin(6, 80, 20, 0);
-	display_hand(playerhand, playerpoints, computerpoints, "TEMPORARY MESSAGE", cardspots, score, msgwindow);
-	wgetch(score);
-	erase_windows(cardspots, score, msgwindow);
-	take_card(deck, playerhand);
-	display_hand(playerhand, playerpoints, computerpoints, "DREW 1 CARD", cardspots, score, msgwindow);
-	wgetch(score);
-	erase_windows(cardspots, score, msgwindow);
-	discard(playerhand, 3);
-	display_hand(playerhand, playerpoints, computerpoints, "DISCARDED PREVIOUS CARD", cardspots, score, msgwindow);
-	wgetch(score);
-	erase_windows(cardspots, score, msgwindow);
-	discard(playerhand, 2);
-	display_hand(playerhand, playerpoints, computerpoints, "DISCARDED ANOTHER CARD", cardspots, score, msgwindow);
-	wgetch(score);
-	erase_windows(cardspots, score, msgwindow);
-	freeze_card(playerhand, 0);
-	display_hand(playerhand, playerpoints, computerpoints, "FROZE A CARD", cardspots, score, msgwindow);
-	wgetch(score);
-	erase_windows(cardspots, score, msgwindow);
-	for(int i = 0; i < 5; i++) {
-		delwin(cardspots[i]);
-	}
-	delwin(score);
-	delwin(msgwindow);
-	endwin();
-	return 0;*/
 	int playerpoints = 0;
 	int computerpoints = 0;
 	initscr();						// Init and setup for curses
 	cbreak();							// ^
 	noecho();							// ^
 	keypad(stdscr, TRUE);	// ^
-	WINDOW* cardspots[5];
-	cardspots[0] = newwin(12, 10, 5, 0);
-	cardspots[1] = newwin(12, 10, 5, 10);
-	cardspots[2] = newwin(12, 10, 5, 20);
-	cardspots[3] = newwin(12, 10, 5, 30);
-	cardspots[4] = newwin(12, 10, 5, 40);
+	WINDOW* pcardspots[5];
+	WINDOW* ccardspots[5];
+	pcardspots[0] = newwin(12, 10, 5, 0);
+	pcardspots[1] = newwin(12, 10, 5, 10);
+	pcardspots[2] = newwin(12, 10, 5, 20);
+	pcardspots[3] = newwin(12, 10, 5, 30);
+	pcardspots[4] = newwin(12, 10, 5, 40);
+	ccardspots[0] = newwin(12, 10, 18, 0);
+	ccardspots[1] = newwin(12, 10, 18, 10);
+	ccardspots[2] = newwin(12, 10, 18, 20);
+	ccardspots[3] = newwin(12, 10, 18, 30);
+	ccardspots[4] = newwin(12, 10, 18, 40);
 	WINDOW* score = newwin(3, 80, 0, 0);
-	WINDOW* msgwindow = newwin(6, 80, 20, 0);
+	WINDOW* msgwindow = newwin(6, 80, 31, 0);
 	while(playerpoints < 10 && computerpoints < 10) {
 		card deck[76];
-		deck = gendeck(deck);
+		gendeck(deck);
 		card playerhand[5];
 		card computerhand[5];
 		deal_hand(deck, playerhand);
 		deal_hand(deck, computerhand);
 		bool handdone = false;
+		mvwprintw(msgwindow, 1, 1, "Thisisatest");
 		while(!handdone) {
+			int vals[5];
+			int cards;
+			int cardnum;
 			bool playercalled = false;
 			bool computercalled = false;
 			bool validcmd = false;
 			while(!validcmd) {
-				display_hand(playerhand, playerpoints, computerpoints, "Press 'd' to discard, 't' to take a card, k to place a card in the interference field or c to call", cardspots, score, msgwindow);
+				display_hand(playerhand, computerhand, playerpoints, computerpoints, "Press 'd' to discard, 't' to take a card, k to place a card in the interference field or c to call", pcardspots, ccardspots, score, msgwindow);
 				int act = wgetch(score);
 				validcmd = true;
 				switch(act) {
@@ -85,30 +54,28 @@ int main(int argc, char** argv) {
 					case 'D':
 					case 'd':
 						werase(msgwindow);
-						int vals[5];
-						int cards = get_hand_vals(playerhand, vals);
-						mvwprintw(msgwindow, "Pick number for card to discard: ");
+						cards = get_hand_vals(playerhand, vals);
+						mvwprintw(msgwindow, 1, 1, "Pick number for card to discard: ");
 						for(int i = 1; i < cards; i++) {
 							wprintw(msgwindow, "%d: %d?  ", i, vals[i]);
 						}
-						wrefresh();
-						int cardnum = wgetch(score);
+						wrefresh(msgwindow);
+						cardnum = wgetch(score);
 						cardnum = cardnum - 48;
 						discard(playerhand, cardnum - 1);
 						break;
 					case 'K':
 					case 'k':
 						werase(msgwindow);
-						int vals[5];
-						int cards = get_hand_vals(playerhand, vals);
-						mvwprintw(msgwindow, "Pick number for card to freed: ");
+						cards = get_hand_vals(playerhand, vals);
+						mvwprintw(msgwindow, 1, 1, "Pick number for card to freeze: ");
 						for(int i = 1; i < cards; i++) {
 							wprintw(msgwindow, "%d: %d?  ", i , vals[i]);
 						}
-						wrefresh();
-						int cardnum = wgetch(score);
+						wrefresh(msgwindow);
+						cardnum = wgetch(score);
 						cardnum = cardnum - 48;
-						freeze_card(card* playerhand, cardnum);
+						freeze_card(playerhand, cardnum);
 						break;
 					case 'C': // Call hand (player)
 					case 'c':
@@ -116,20 +83,69 @@ int main(int argc, char** argv) {
 					break;
 					default:
 						werase(msgwindow);
-						mvwprintw(msgwindow, "Invalid command.  Press any key to try again.");
-						wrefresh();
+						mvwprintw(msgwindow, 1, 1, "Invalid command.  Press any key to try again.");
+						wrefresh(msgwindow);
 						wgetch(score);
 						validcmd = false;
 				}
 			}
 			if(computercalled) {
-				int vals[5];
-				int player_hand_size;
+				vals[5];
+				cards = get_hand_vals(playerhand, vals);
 				if(random() % 2) {
 					switch_card(playerhand, deck);
 				}
 				if(random() % 2) {
 					switch_card(computerhand, deck);
+				}
+				if(cards > 3) {
+					werase(msgwindow);
+					mvwprintw(msgwindow, 1, 1, "You have too many cards.  Please choose one to discard: ");
+					for(int i = 1; i < cards; i++) {
+						wprintw(msgwindow, "%d: %d?  ", i, vals[i]);
+					}
+					wrefresh(msgwindow);
+					cardnum = wgetch(score);
+					cardnum = cardnum - 48;
+					discard(playerhand, cardnum - 1);
+				}
+				handdone = true;
+				end_hand(playerhand, computerhand, deck, &playerpoints, &computerpoints, pcardspots, ccardspots, score, msgwindow);
+			}
+			else {
+				computer_turn(); // TODO: Create some AI for this
+				//TODO: This is where it will announce the AI's action
+				vals[5];
+				cards = get_hand_vals(playerhand, vals);
+				if(cards > 3) {
+					werase(msgwindow);
+					mvwprintw(msgwindow, 1, 1, "You have too many cards.  Please choose one to discard: ");
+					for(int i = 1; i < cards; i++) {
+						wprintw(msgwindow, "%d: %d?  ", i, vals[i]);
+					}
+					wrefresh(msgwindow);
+					cardnum = wgetch(score);
+					cardnum = cardnum - 48;
+					discard(playerhand, cardnum - 1);
+				}
+				if(playercalled) {
+					if(random() % 2) {
+						switch_card(playerhand, deck);
+					}
+					if(random() % 2) {
+						switch_card(computerhand, deck);
+					}
+					handdone = true;
+					end_hand(playerhand, computerhand, deck, &playerpoints, &computerpoints, pcardspots, ccardspots, score, msgwindow);
+				}
+				else {
+					if(random() % 2) {
+						switch_card(playerhand, deck);
+					}
+					if(random() % 2) {
+						switch_card(computerhand, deck);
+					}
+
 				}
 			}
 		}

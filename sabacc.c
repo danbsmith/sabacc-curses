@@ -5,28 +5,50 @@
 #include "sabacc.h"
 #include "deck.h"
 
-void display_hand(card* hand, int playerpoints, int computerpoints, char* msg, WINDOW** cardspots, WINDOW* score, WINDOW* msgwindow) {
+void display_hand(card* playerhand, card* computerhand, int playerpoints, int computerpoints, char* msg, WINDOW** pcardspots, WINDOW** ccardspots, WINDOW* score, WINDOW* msgwindow) {
   card phand[5];
+  card chand[5];
   int handsize = 0;
   for(int i = 0; i < 5; i++) {
-    if((hand + i)->value < 20) {
-      phand[handsize] = *(hand + i);
+    if((playerhand + i)->value < 20) {
+      phand[handsize] = *(playerhand + i);
       handsize++;
     }
   }
   for(int i = 0; i < handsize; i++) {
     size_t namelength = strlen(phand[i].name);
     int neededlines = (namelength / 8) + 1;
-    box(*(cardspots + i), 0, 0);
-    mvwprintw(*(cardspots + i), 1, 1, "%d", phand[i].value);
-    mvwprintw(*(cardspots + i), 3, 1,  "%.8s", phand[i].name);
+    box(*(pcardspots + i), 0, 0);
+    mvwprintw(*(pcardspots + i), 1, 1, "%d", phand[i].value);
+    mvwprintw(*(pcardspots + i), 3, 1,  "%.8s", phand[i].name);
     for(int j = 1; j < neededlines; j++) {
-      mvwprintw(*(cardspots + i), 3 + j, 1,  "%.8s", (phand[i].name + (j * 8)));
+      mvwprintw(*(pcardspots + i), 3 + j, 1,  "%.8s", (phand[i].name + (j * 8)));
     }
     if(!phand[i].switchable) {
-      mvwprintw(*(cardspots + i), 2, 0, "LOCKED");
+      mvwprintw(*(pcardspots + i), 2, 0, "LOCKED");
     }
-    wrefresh(*(cardspots + i));
+    wrefresh(*(pcardspots + i));
+  }
+  handsize = 0;
+  for(int i = 0; i < 5; i++) {
+    if((computerhand + i)->value < 20) {
+      chand[handsize] = *(computerhand + i);
+      handsize++;
+    }
+  }
+  for(int i = 0; i < handsize; i++) {
+    if(!chand[i].switchable) {
+      size_t namelength = strlen(chand[i].name);
+      int neededlines = (namelength / 8) + 1;
+      box(*(ccardspots + i), 0, 0);
+      mvwprintw(*(ccardspots + i), 1, 1, "%d", chand[i].value);
+      mvwprintw(*(ccardspots + i), 3, 1,  "%.8s", chand[i].name);
+      for(int j = 1; j < neededlines; j++) {
+        mvwprintw(*(ccardspots + i), 3 + j, 1,  "%.8s", (chand[i].name + (j * 8)));
+      }
+      mvwprintw(*(ccardspots + i), 2, 0, "LOCKED");
+    }
+    wrefresh(*(ccardspots + i));
   }
   box(score, 0, 0);
   mvwprintw(score, 1, 1, "Player: %d vs. Computer: %d", playerpoints, computerpoints);
@@ -37,11 +59,14 @@ void display_hand(card* hand, int playerpoints, int computerpoints, char* msg, W
   return;
 }
 
-void erase_windows(WINDOW** cardspots, WINDOW* score, WINDOW* msgwindow) {
+void erase_windows(WINDOW** cardspots1, WINDOW** cardspots2, WINDOW* score, WINDOW* msgwindow) {
   for(int i = 0; i < 5; i++) {
-    werase(cardspots[i]);
-    wborder(cardspots[i], ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
-    wrefresh(cardspots[i]);
+    werase(cardspots1[i]);
+    wborder(cardspots1[i], ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
+    wrefresh(cardspots1[i]);
+    werase(cardspots2[i]);
+    wborder(cardspots2[i], ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
+    wrefresh(cardspots2[i]);
   }
   werase(score);
   wborder(score, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
@@ -150,4 +175,44 @@ int handeval(card* hand1, card* hand2) {
   if(hand2_idiots == 7) {winner = 2;}
   if(hand1_idiots == 7 && hand2_idiots == 7) {winner = 0;}
   return winner;
+}
+
+void end_hand(card* playerhand, card* computerhand, card* deck, int* playerpoints, int* computerpoints, WINDOW** cardspots1, WINDOW** cardspots2, WINDOW* score, WINDOW* msgwindow) {
+  char winnername[16];
+  char msg[64] = "Hand has been called.  Press any key to continue.";
+  char playerstring[] = "Player";
+  char computerstring[] = "Computer";
+  erase_windows(cardspots1, cardspots2, score, msgwindow);
+  display_hand(playerhand, computerhand, *playerpoints, *computerpoints, msg, cardspots1, cardspots2, score, msgwindow);
+  wgetch(score);
+  int winner = handeval(playerhand, computerhand);
+  while(winner == 0) {
+    take_card(deck, playerhand);
+    take_card(deck, computerhand);
+    winner = handeval(playerhand, computerhand);
+  }
+  switch(winner) {
+    case 1:
+      (*playerpoints)++;
+      strncpy(winnername, playerstring, 16);
+    break;
+    case 2:
+      (*computerpoints)++;
+      strncpy(winnername, computerstring, 16);
+    break;
+  }
+  for(int i = 0; i < 5; i++) {
+    freeze_card(playerhand, i);
+    freeze_card(computerhand, i);
+  }
+  snprintf(msg, 64, "The winner of this hand is the %s.  Press any key to continue.", winnername);
+  erase_windows(cardspots1, cardspots2, score, msgwindow);
+  display_hand(playerhand, computerhand, *playerpoints, *computerpoints, msg, cardspots1, cardspots2, score, msgwindow);
+  wgetch(score);
+  erase_windows(cardspots1, cardspots2, score, msgwindow);
+  return;
+}
+
+void computer_turn() {
+  return;
 }

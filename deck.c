@@ -105,7 +105,7 @@ card* gendeck(card* deck) {
   int scramble = random() % 76;
   int cardsset = 0;
   while(cardsset < 76) {
-    while(deck[scramble].value < 20) {scramble = random() % 76;}\
+    while(deck[scramble].value > 20) {scramble = random() % 76;}
     deck[scramble].value = cardvals[cardsset];
     deck[scramble].suit = suits[cardsset];
     if(deck[scramble].value <= 0) {
@@ -212,6 +212,7 @@ void deal_hand(card* deck, card* hand) {
 }
 
 int get_hand_vals(card* hand, int* vals) {
+  int cards = 0;
   for(int i = 0; i < 5; i++) {
     if(hand[i].value < 21) {
       vals[cards] = hand[i].value;
